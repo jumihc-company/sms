@@ -1,0 +1,29 @@
+{
+    "name": "jmhc/sms",
+    "description": "Make SMS sending easier.",
+    "keywords": [
+        "jmhc",
+        "sms",
+        "easy-sms"
+    ],
+    "homepage": "http://jumihc.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jumihc",
+            "email": "jumihuchuang@126.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Jmhc\\Sms\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "require": {
+        "php": "^7.2",
+        "overtrue/easy-sms": "^1.1"
+    }
+}
