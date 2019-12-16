@@ -17,10 +17,7 @@
     "autoload": {
         "psr-4": {
             "Jmhc\\Sms\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "require": {
         "php": "^7.2",
