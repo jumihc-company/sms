@@ -186,19 +186,8 @@ class Sms
             throw new SmsException('Sending a message must.', 403);
         }
 
-        // 验证时间是否允许
-        $interval = $this->smsCache->sendCheck();
-        if ($interval !== true) {
-            throw new SmsException(
-                sprintf(
-                    'SMS failed, please try again after %d seconds',
-                    $interval
-                ),
-            404,
-            [
-                'interval' => $interval,
-            ]);
-        }
+        // 缓存发送检测
+        $this->smsCache->sendCheck();
     }
 
     /**

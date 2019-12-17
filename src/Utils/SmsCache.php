@@ -7,6 +7,7 @@
 namespace Jmhc\Sms\Utils;
 
 use Jmhc\Sms\Contracts\CacheInterface;
+use Jmhc\Sms\Exceptions\SmsException;
 
 class SmsCache
 {
@@ -118,18 +119,26 @@ class SmsCache
 
     /**
      * 发送检测
-     * @return bool|int|mixed
+     * @throws SmsException
      */
     public function sendCheck()
     {
         $data = $this->getNumCache();
         $diff = time() - $data['time'];
         $getInterval = $this->getInterval($data['num']);
-        if ($getInterval > $diff) {
-            return $getInterval - $diff;
-        }
 
-        return true;
+        if ($getInterval > $diff) {
+            $interval = $getInterval - $diff;
+            throw new SmsException(
+                sprintf(
+                    'SMS failed, please try again after %d seconds',
+                    $interval
+                ),
+                404,
+                [
+                    'interval' => $interval,
+                ]);
+        }
     }
 
     /**
@@ -170,7 +179,7 @@ class SmsCache
     /**
      * 验证
      * @param string $code
-     * @return bool|string
+     * @throws SmsException
      */
     public function verify(string $code)
     {
@@ -178,12 +187,10 @@ class SmsCache
         $data = $this->getCodeCache();
 
         if (empty($data['code'])) {
-            return '无效的验证码';
+            throw new SmsException('Invalid verification code', 411);
         } elseif ($data['code'] != $code) {
-            return '验证码不正确';
+            throw new SmsException('The verification code is not correct', 412);
         }
-
-        return true;
     }
 
     /**
