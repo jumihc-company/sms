@@ -8,7 +8,6 @@ namespace Jmhc\Sms;
 
 use Jmhc\Sms\Contracts\CacheInterface;
 use Jmhc\Sms\Exceptions\SmsException;
-use Jmhc\Sms\Utils\ParseResult;
 use Jmhc\Sms\Utils\SmsCache;
 use Overtrue\EasySms\Contracts\MessageInterface;
 use Overtrue\EasySms\EasySms;
@@ -176,15 +175,15 @@ class Sms
     protected function sendCheck()
     {
         if (! preg_match('/^1[3-9]\d{9}$/', $this->phone)) {
-            throw new SmsException('Incorrect phone number format.');
+            throw new SmsException('Incorrect phone number format.', 401);
         }
 
         if (is_null($this->code)) {
-            throw new SmsException('You need to call setCode to set the code.');
+            throw new SmsException('You need to call setCode to set the code.', 402);
         }
 
         if (is_null($this->message)) {
-            throw new SmsException('Sending a message must.');
+            throw new SmsException('Sending a message must.', 403);
         }
 
         // 验证时间是否允许
@@ -195,7 +194,7 @@ class Sms
                     'SMS failed, please try again after %d seconds',
                     $interval
                 ),
-            0,
+            404,
             [
                 'interval' => $interval,
             ]);

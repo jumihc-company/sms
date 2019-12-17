@@ -7,7 +7,6 @@
 namespace Jmhc\Sms\Exceptions;
 
 use Exception;
-use Throwable;
 
 class SmsException extends Exception
 {
