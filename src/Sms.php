@@ -198,6 +198,15 @@ class Sms
     }
 
     /**
+     * 获取 EasySms 实例
+     * @return EasySms
+     */
+    public function getEasySms()
+    {
+        return $this->easySms ?: $this->easySms = new EasySms($this->config);
+    }
+
+    /**
      * 发送检测
      * @throws SmsException
      */
@@ -225,14 +234,5 @@ class Sms
         if (is_null($this->message)) {
             throw new SmsException('Sending a message must.', 402);
         }
-    }
-
-    /**
-     * 获取 EasySms 实例
-     * @return EasySms
-     */
-    protected function getEasySms()
-    {
-        return $this->easySms ?: $this->easySms = new EasySms($this->config);
     }
 }

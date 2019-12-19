@@ -12,6 +12,7 @@
     - [setValidTime](#setvalidtime)
     - [useCache](#usecache)
     - [send](#send)
+    - [getEasySms](#geteasysms)
 - [SmsCache 类方法介绍](#smscache-%E7%B1%BB%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D)
     - [setPhone](#setphone-1)
     - [setType](#settype-1)
@@ -40,6 +41,7 @@ $ composer require jmhc/sms
     `Overtrue\EasySms\Exceptions\InvalidArgumentException` **easy-sms 无效参数异常**
     `Overtrue\EasySms\Exceptions\NoGatewayAvailableException` **easy-sms 网关异常**
     `Jmhc\Sms\Exceptions\SmsException` **短信相关异常，[错误码](#smsexception-%E9%94%99%E8%AF%AF%E7%A0%81)**
+- 关于配置、发送内容请参考 [overtrue/easy-sms](#https://github.com/overtrue/easy-sms)
 
 
 ```php
@@ -213,6 +215,18 @@ send()
 
 // 使用调试模式（不会真正发送短信）
 send(true)
+```
+
+### `getEasySms`
+
+> 获取 easySms 实例
+
+```js
+// 注册自定义网关
+$sms->getEasySms()->extend('mygateway', function($gatewayConfig){
+    // $gatewayConfig 来自配置文件里的 `gateways.mygateway`
+    return new MyGateway($gatewayConfig);
+});
 ```
 
 ## `SmsCache` 类方法介绍
