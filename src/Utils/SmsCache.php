@@ -134,7 +134,7 @@ class SmsCache
                     'SMS failed, please try again after %d seconds',
                     $interval
                 ),
-                404,
+                403,
                 [
                     'phone' => $this->phone,
                     'interval' => $interval,

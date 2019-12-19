@@ -203,6 +203,11 @@ class Sms
      */
     protected function sendCheck()
     {
+        // 默认设置验证码为0
+        if (is_null($this->code)) {
+            $this->setCode(0);
+        }
+
         foreach ($this->phoneContainer as $phone => $class) {
             if (! preg_match('/^1[3-9]\d{9}$/', $phone)) {
                 throw new SmsException('Incorrect phone number format.', 401, [
@@ -217,12 +222,8 @@ class Sms
             $this->useCache && $this->smsCache->sendCheck();
         }
 
-        if (is_null($this->code)) {
-            throw new SmsException('You need to call setCode to set the code.', 402);
-        }
-
         if (is_null($this->message)) {
-            throw new SmsException('Sending a message must.', 403);
+            throw new SmsException('Sending a message must.', 402);
         }
     }
 
