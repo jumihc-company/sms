@@ -1,3 +1,30 @@
+## 目录
+
+- [安装](#%E5%AE%89%E8%A3%85)
+- [简单使用](#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8)
+- [SMS 类方法介绍](#sms-%E7%B1%BB%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D)
+    - [setPhone](#setphone)
+    - [setType](#settype)
+    - [setCode](#setcode)
+    - [setMessage](#setmessage)
+    - [setGateways](#setgateways)
+    - [setInterval](#setinterval)
+    - [setValidTime](#setvalidtime)
+    - [useCache](#usecache)
+    - [send](#send)
+- [SmsCache 类方法介绍](#smscache-%E7%B1%BB%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D)
+    - [setPhone](#setphone-1)
+    - [setType](#settype-1)
+    - [setInterval](#setinterval-1)
+    - [setValidTime](#setvalidtime-1)
+    - [sendCheck](#sendcheck)
+    - [send](#send-1)
+    - [verify](#verify)
+    - [sendInterval](#sendinterval)
+
+- [SmsException 错误码](#smsexception-%E9%94%99%E8%AF%AF%E7%A0%81)
+
+
 ## 安装
 
 ```shell
