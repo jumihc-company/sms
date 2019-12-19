@@ -39,7 +39,7 @@ $ composer require jmhc/sms
 - 使用时需要自行捕获以下异常：
     `Overtrue\EasySms\Exceptions\InvalidArgumentException` **easy-sms 无效参数异常**
     `Overtrue\EasySms\Exceptions\NoGatewayAvailableException` **easy-sms 网关异常**
-    `Jmhc\Sms\Exceptions\SmsException` **短信相关异常**
+    `Jmhc\Sms\Exceptions\SmsException` **短信相关异常，[错误码](#smsexception-%E9%94%99%E8%AF%AF%E7%A0%81)**
 
 
 ```php
