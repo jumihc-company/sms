@@ -8,9 +8,10 @@ namespace Jmhc\Sms;
 
 use Jmhc\Sms\Contracts\CacheInterface;
 use Jmhc\Sms\Exceptions\SmsException;
+use Jmhc\Sms\Utils\FormatPhone;
 use Jmhc\Sms\Utils\SmsCache;
 use Overtrue\EasySms\Contracts\MessageInterface;
-use Overtrue\EasySms\EasySms;
+use Overtrue\EasySms\Contracts\PhoneNumberInterface;
 use Overtrue\EasySms\Exceptions\InvalidArgumentException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
@@ -21,6 +22,12 @@ class Sms
      * @var SmsCache
      */
     protected $smsCache;
+
+    /**
+     * 短信缓存工具容器
+     * @var array
+     */
+    protected $smsCacheContainer;
 
     /**
      * 配置数组
@@ -34,10 +41,10 @@ class Sms
     protected $easySms;
 
     /**
-     * 发送手机
-     * @var string
+     * 发送手机号容器
+     * @var array
      */
-    protected $phone;
+    protected $phoneContainer;
 
     /**
      * 发送类型
@@ -61,6 +68,12 @@ class Sms
      */
     protected $gateways = [];
 
+    /**
+     * 使用缓存
+     * @var bool
+     */
+    protected $useCache = true;
+
     public function __construct(CacheInterface $cache, array $config)
     {
         $this->smsCache = new SmsCache($cache);
@@ -69,13 +82,13 @@ class Sms
 
     /**
      * 设置手机号
-     * @param string $phone
+     * @param string|array|PhoneNumberInterface $phone
+     * @param string $delimiter
      * @return $this
      */
-    public function setPhone(string $phone)
+    public function setPhone($phone, string $delimiter = ',')
     {
-        $this->phone = $phone;
-        $this->smsCache->setPhone($phone);
+        $this->phoneContainer = FormatPhone::run($phone, $delimiter);
         return $this;
     }
 
@@ -147,6 +160,17 @@ class Sms
     }
 
     /**
+     * 使用缓存
+     * @param bool $use
+     * @return $this
+     */
+    public function useCache(bool $use)
+    {
+        $this->useCache = $use;
+        return $this;
+    }
+
+    /**
      * 发送
      * @param bool $debug
      * @return int|mixed
@@ -160,12 +184,17 @@ class Sms
         $this->sendCheck();
 
         // 调用 easySms 发送短信
-        ! $debug && $this->getEasySms()->send($this->phone, $this->message, $this->gateways);
+        ! $debug && $this->getEasySms()->send($this->phoneContainer, $this->message, $this->gateways);
 
-        // 设置发送成功缓存
-        $this->smsCache->send($this->code);
+        $res = [];
+        foreach ($this->phoneContainer as $phone => $class) {
+            // 设置发送成功缓存
+            $this->useCache && $this->smsCacheContainer[$phone]->send($this->code);
 
-        return $this->smsCache->sendInterval();
+            $res[$phone] = $this->useCache ? $this->smsCacheContainer[$phone]->sendInterval() : 0;
+        }
+
+        return $res;
     }
 
     /**
@@ -174,8 +203,18 @@ class Sms
      */
     protected function sendCheck()
     {
-        if (! preg_match('/^1[3-9]\d{9}$/', $this->phone)) {
-            throw new SmsException('Incorrect phone number format.', 401);
+        foreach ($this->phoneContainer as $phone => $class) {
+            if (! preg_match('/^1[3-9]\d{9}$/', $phone)) {
+                throw new SmsException('Incorrect phone number format.', 401, [
+                    'phone' => $phone,
+                ]);
+            }
+
+            // 设置缓存对象容器
+            empty($this->smsCacheContainer[$phone]) && $this->smsCacheContainer[$phone] = $this->smsCache->setPhone($phone);
+
+            // 缓存发送检测
+            $this->useCache && $this->smsCache->sendCheck();
         }
 
         if (is_null($this->code)) {
@@ -185,9 +224,6 @@ class Sms
         if (is_null($this->message)) {
             throw new SmsException('Sending a message must.', 403);
         }
-
-        // 缓存发送检测
-        $this->smsCache->sendCheck();
     }
 
     /**
@@ -196,10 +232,6 @@ class Sms
      */
     protected function getEasySms()
     {
-        if (is_null($this->easySms)) {
-            $this->easySms = new EasySms($this->config);
-        }
-
-        return $this->easySms;
+        return $this->easySms ?: $this->easySms = new EasySms($this->config);
     }
 }
