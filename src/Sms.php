@@ -211,7 +211,7 @@ class Sms
             }
 
             // 设置缓存对象容器
-            empty($this->smsCacheContainer[$phone]) && $this->smsCacheContainer[$phone] = $this->smsCache->setPhone($phone);
+            empty($this->smsCacheContainer[$phone]) && $this->smsCacheContainer[$phone] = clone $this->smsCache->setPhone($phone);
 
             // 缓存发送检测
             $this->useCache && $this->smsCache->sendCheck();
