@@ -43,12 +43,13 @@ $ composer require jmhc/sms
     `Jmhc\Sms\Exceptions\SmsException` **短信相关异常，[错误码](#smsexception-%E9%94%99%E8%AF%AF%E7%A0%81)**
 - 关于配置、发送内容请参考 [overtrue/easy-sms](#https://github.com/overtrue/easy-sms)
 
+**发送示例：**
 
 ```php
 use Jmhc\Sms\Sms;
 
 // 实现了 Jmhc\Sms\Contracts\CacheInterface 的缓存类
-$cache = new Cache();
+$cache = new xxxCache();
 
 // 配置
 $config = [
@@ -97,6 +98,44 @@ var_dump($res);
 // [
 //     13188888888 => 60,
 // ]
+```
+
+**验证示例：**
+```php
+use Jmhc\Sms\Utils\SmsCache;
+
+// 实现了 Jmhc\Sms\Contracts\CacheInterface 的缓存类
+$cache = new xxxCache();
+$smsCache = new SmsCache($cache);
+
+// 验证验证码是否正确，验证失败将会抛出 Jmhc\Sms\Exceptions\SmsException 异常
+// 验证无类型的验证码
+$smsCache->setPhone(13188888888)
+    ->verify(123456);
+    
+// 验证登录类型的验证码
+$smsCache->setPhone(13188888888)
+	->setType('login')
+    ->verify(123456);
+```
+
+**使用验证码示例：**
+
+```php
+use Jmhc\Sms\Utils\SmsCache;
+
+// 实现了 Jmhc\Sms\Contracts\CacheInterface 的缓存类
+$cache = new xxxCache();
+$smsCache = new SmsCache($cache);
+
+// 使用无类型的验证码
+$smsCache->setPhone(13188888888)
+    ->useCode();
+    
+// 使用登录类型的验证码
+$smsCache->setPhone(13188888888)
+	->setType('login')
+    ->useCode();
 ```
 
 ## `SMS` 类方法介绍
