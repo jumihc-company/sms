@@ -219,7 +219,7 @@ class Sms
 
         foreach ($this->phoneContainer as $phone => $class) {
             if (! preg_match('/^1[3-9]\d{9}$/', $phone)) {
-                throw new SmsException('Incorrect phone number format.', 401, [
+                throw new SmsException('Incorrect phone number format.', ErrorCode::INVALID_PHONE_FORMAT, [
                     'phone' => $phone,
                 ]);
             }
@@ -232,7 +232,7 @@ class Sms
         }
 
         if (is_null($this->message)) {
-            throw new SmsException('Sending a message must.', 402);
+            throw new SmsException('Sending a message must.', ErrorCode::MESSAGE_MUST);
         }
     }
 }

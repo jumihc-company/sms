@@ -23,8 +23,12 @@ class SmsException extends Exception
         $this->data = $data;
     }
 
-    public function getData()
+    public function getData(string $key = '', $default = null)
     {
-        return $this->data;
+        if (empty($key)) {
+            return $this->data;
+        }
+
+        return $this->data[$key] ?? $default;
     }
 }

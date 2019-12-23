@@ -7,6 +7,7 @@
 namespace Jmhc\Sms\Utils;
 
 use Jmhc\Sms\Contracts\CacheInterface;
+use Jmhc\Sms\ErrorCode;
 use Jmhc\Sms\Exceptions\SmsException;
 
 class SmsCache
@@ -134,7 +135,7 @@ class SmsCache
                     'SMS failed, please try again after %d seconds',
                     $interval
                 ),
-                403,
+                ErrorCode::WAIT_INTERVAL,
                 [
                     'phone' => $this->phone,
                     'interval' => $interval,
@@ -188,9 +189,9 @@ class SmsCache
         $data = $this->getCodeCache();
 
         if (empty($data['code'])) {
-            throw new SmsException('Invalid verification code', 411);
+            throw new SmsException('Invalid verification code', ErrorCode::INVALID_CODE);
         } elseif ($data['code'] != $code) {
-            throw new SmsException('The verification code is not correct', 412);
+            throw new SmsException('The verification code is not correct', ErrorCode::CODE_NOT_CORRECT);
         }
     }
 
