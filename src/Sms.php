@@ -18,6 +18,12 @@ use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 class Sms
 {
     /**
+     * 缓存实例
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
      * 短信缓存工具
      * @var SmsCache
      */
@@ -76,7 +82,8 @@ class Sms
 
     public function __construct(CacheInterface $cache, array $config)
     {
-        $this->smsCache = new SmsCache($cache);
+        $this->cache = $cache;
+        $this->smsCache = new SmsCache($this->cache);
         $this->config = $config;
     }
 
@@ -183,6 +190,13 @@ class Sms
         // 发送检测
         $this->sendCheck();
 
+        // 获取锁定 key
+        $lockKey = $this->getLockKey();
+        // 验证是否被锁定
+        if (! $this->cache->lock($lockKey)) {
+            throw new SmsException('Send frequently, please try again later', ErrorCode::SEND_FREQUENTLY);
+        }
+
         // 调用 easySms 发送短信
         ! $debug && $this->getEasySms()->send($this->phoneContainer, $this->message, $this->gateways);
 
@@ -193,6 +207,9 @@ class Sms
 
             $res[$phone] = $this->useCache ? $this->smsCacheContainer[$phone]->sendInterval() : 0;
         }
+
+        // 解除锁定
+        $this->cache->unlock($lockKey);
 
         return $res;
     }
@@ -234,5 +251,22 @@ class Sms
         if (is_null($this->message)) {
             throw new SmsException('Sending a message must.', ErrorCode::MESSAGE_MUST);
         }
+    }
+
+    /**
+     * 获取锁定key
+     * @return string
+     */
+    protected function getLockKey()
+    {
+        $res = $this->message;
+
+        if ($res instanceof MessageInterface) {
+            $res = json_encode($res->getData());
+        } elseif (is_array($res)) {
+            $res = json_encode($res);
+        }
+
+        return 'sms-lock-' . md5(json_encode($this->phoneContainer) . $res);
     }
 }

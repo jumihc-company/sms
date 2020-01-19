@@ -13,4 +13,5 @@ class ErrorCode
     const WAIT_INTERVAL = 403;
     const INVALID_CODE = 411;
     const CODE_NOT_CORRECT = 412;
+    const SEND_FREQUENTLY = 413;
 }

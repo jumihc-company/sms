@@ -21,6 +21,7 @@
     },
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
         "overtrue/easy-sms": "^1.1"
     }
 }

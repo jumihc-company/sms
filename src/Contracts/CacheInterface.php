@@ -44,4 +44,18 @@ interface CacheInterface
      * @return bool
      */
     public function del(string $key): bool ;
+
+    /**
+     * 锁定
+     * @param string $key
+     * @return bool
+     */
+    public function lock(string $key): bool ;
+
+    /**
+     * 解锁
+     * @param string $key
+     * @return bool
+     */
+    public function unlock(string $key): bool ;
 }
