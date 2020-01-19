@@ -27,7 +27,7 @@ class FormatPhone
 
         $res = [];
 
-        if (is_string($phone)) {
+        if (is_string($phone) || is_int($phone)) {
             $phone = explode($delimiter, $phone);
         }
 
